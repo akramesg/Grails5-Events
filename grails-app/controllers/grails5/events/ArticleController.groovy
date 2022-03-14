@@ -41,7 +41,7 @@ class ArticleController {
         article.save flush:true
 
         //notify ('grails5.events.article_published', article)
-        eventHandlingService.event('article_published',article,[ fork: true, namespace: 'grails5.events', onError: { Closure reply ->
+        eventHandlingService.event('article_published',article,[ fork: false, namespace: 'grails5.events', onError: { Closure reply ->
         println('some reply')
         } ] )
 
