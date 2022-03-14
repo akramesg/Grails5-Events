@@ -1,11 +1,13 @@
 package grails5.events
 
+import grails.events.annotation.Publisher
 import grails.gorm.transactions.Transactional
 
 import static org.springframework.http.HttpStatus.*
 
 @Transactional(readOnly = true)
 class ArticleController {
+    EventHandlingService eventHandlingService
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
@@ -22,6 +24,7 @@ class ArticleController {
     }
 
     @Transactional
+    @Publisher  // or use implements EventPublisher for the containing class
     def save(Article article) {
         if (article == null) {
             transactionStatus.setRollbackOnly()
@@ -37,8 +40,12 @@ class ArticleController {
 
         article.save flush:true
 
-        //we are now sending a notification with the article through Reactor's EventBus
-        notify 'grails5.events.article_published', article
+        //notify ('grails5.events.article_published', article)
+        eventHandlingService.event('article_published',article,[ fork: true, namespace: 'grails5.events', onError: { Closure reply ->
+        println('some reply')
+        } ] )
+
+        println('Notify sent')
 
         request.withFormat {
             form multipartForm {
