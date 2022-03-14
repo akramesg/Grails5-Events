@@ -4,4 +4,4 @@ https://speakerdeck.com/mploed/building-loosely-coupled-and-reactive-application
 
 https://www.youtube.com/watch?v=CCjEP-dsyz4
 
-fuck wait, lloks like they deprecated the usage of reactor in grails 3.3, will update the project accordingly
+fuck wait, looks like they deprecated the usage of reactor in grails 3.3, will update the project accordingly
