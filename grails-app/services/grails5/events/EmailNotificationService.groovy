@@ -6,6 +6,9 @@ class EmailNotificationService {
 
     @Subscriber("grails5.events.article_published")
     def notifyBossOfNewArticle(Object eventData) {
-        println "Notify Boss by Mail of new Article: " + eventData.toString()
+
+        println "executing event"
+        println "Notify of new Article: " + eventData.toString()
+
     }
 }

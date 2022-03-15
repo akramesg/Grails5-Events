@@ -42,10 +42,10 @@ class ArticleController {
 
         //notify ('grails5.events.article_published', article)
         eventHandlingService.event('article_published',article,[ fork: false, namespace: 'grails5.events', onError: { Closure reply ->
-        println('some reply')
+        println('some error reply')
         } ] )
 
-        println('Notify sent')
+        println('After notify sent')
 
         request.withFormat {
             form multipartForm {

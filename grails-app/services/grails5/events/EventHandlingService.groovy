@@ -2,9 +2,12 @@ package grails5.events
 
 import grails.events.EventPublisher
 
-class EventHandlingService implements EventPublisher {
+import java.util.concurrent.CompletableFuture
 
-    // TODO Discover how to replicate the EventReply response functionality
+class EventHandlingService implements EventPublisher {
+    final CompletableFuture<String> waitFor = new CompletableFuture<>()
+
+    // Discover how to replicate the EventReply response functionality
     // replaces previous functionality provided by grails events plugin.
     def event(String topic, Object initialParameter, Map eventParams) {
         log.debug("Publishing to topic $topic")
@@ -19,11 +22,14 @@ class EventHandlingService implements EventPublisher {
         if (eventParams?.fork == false) {
             try {
                 println "b4 sAndR"
-                sendAndReceive(newTopic, initialParameter, {Object result ->
+                Closure c =  {Object result ->
                     log.debug "in sAndR result"
                     println "in sAndR result"
+                    waitFor.complete(result)
                     return result
-                })
+                }
+                sendAndReceive(newTopic, initialParameter,c)
+                c
                 println "after sAndR"
             } catch (Exception ex) {
                 log.error("Error in sendAndReceive call",ex)
@@ -34,7 +40,7 @@ class EventHandlingService implements EventPublisher {
             }
         } else {
             try {
-                println('no fork so just notify the fkr')
+                println('no fork so just notify')
                 notify(newTopic, initialParameter)
             } catch (Exception ex) {
                 log.error("Error in notify call", ex)
